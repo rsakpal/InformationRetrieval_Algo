@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "InformationRetrieval_Algo", "InformationRetrieval_Algo\InformationRetrieval_Algo.vbproj", "{16D0ECDE-5E98-4397-A409-7FDA229D53E8}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "nltk.py", "nltk.py\nltk.py.pyproj", "{84F83AF2-844A-4461-9D90-046070F4E422}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16D0ECDE-5E98-4397-A409-7FDA229D53E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16D0ECDE-5E98-4397-A409-7FDA229D53E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16D0ECDE-5E98-4397-A409-7FDA229D53E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16D0ECDE-5E98-4397-A409-7FDA229D53E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84F83AF2-844A-4461-9D90-046070F4E422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84F83AF2-844A-4461-9D90-046070F4E422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84F83AF2-844A-4461-9D90-046070F4E422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84F83AF2-844A-4461-9D90-046070F4E422}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

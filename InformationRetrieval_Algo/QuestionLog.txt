@@ -1,0 +1,11 @@
+﻿1     What kind of accident did you have       What\WP kind\NN of\IN accident\NNP did\VBD you\PRP have\VBP 
+2     Were you hit by a blast wave or IED or were you knocked down from the vehicle       Were\VBD you\PRP hit\VBN by\IN a\DT blast\NN wave\NNP or\CC IED\NNP were\VBD knocked\VBD down\IN from\IN the\DT vehicle\NNP 
+3     Did you hit something when you fell of the vehicle      Did\VBD you\PRP hit\VBN something\NN when\WRB fell\NNP of\IN the\DT vehicle\NNP 
+4     Were you unconcious      Were\VBD you\PRP unconcious\NNP 
+5     Do you remember how long were you unconcious for      Do\VB you\PRP remember\VB how\WRB long\NNP were\VBD unconcious\NNP for\IN 
+6     Were you hurt physically      Were\VBD you\PRP hurt\NNP physically\RB 
+7     Did you serve in army navy or airforce      Did\VBD you\PRP serve\VBP in\IN army\NNP navy\NNP or\CC airforce\NNP 
+8     When did you join the army      When\WRB did\VBD you\PRP join\VB the\DT army\NNP 
+9     When were you discharged from the army      When\WRB were\VBD you\PRP discharged\VBN from\IN the\DT army\NNP 
+10     Describe the events of your accident in details      Describe\VB the\DT events\NNS of\IN your\JJ accident\NNP in\IN details\NNS 
+11     When were you discharged from airforce      When\WRB were\VBD you\PRP discharged\VBN from\IN airforce\NNP 
