@@ -144,6 +144,19 @@ Module POSTagger
 
     ' Function to accept sort out keywords from a given Dictionary of POS tags
     Function regexKeyword(ByVal newDict As Dictionary(Of String, String)) As String
-        Dim patternKeyword As String = ""
+        Dim patternKeyword As New Regex("(CD|FW|JJ[R|S]?|NN(P|S|PS)?|RB[R|S]?|VB[D|G|N|P|Z]?|W(DT|P|RB|P\$))")      ' Pattern that needs to be matched to sort the keywords
+        Dim keywordString As String = ""                                                                            ' String of keywords that needs to be returned 
+
+        ' Filter through each item in the dictionary
+        For Each item As KeyValuePair(Of String, String) In newDict
+            ' Match the value to the pattern
+            Dim mKeyword As Match = patternKeyword.Match(item.Value)
+
+            ' If value matches the pattern then concat to the string keywordString
+            If mKeyword.Success Then
+                keywordString = String.Concat(keywordString, item.Key, ",")
+            End If
+        Next
+        Return keywordString
     End Function
 End Module

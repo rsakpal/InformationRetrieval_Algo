@@ -40,23 +40,22 @@ Public Class Form1
 
             ' If question match is found
             If Not quesNum = -1 Then
-
-                ' Split the string object in tokens
-                Dim qNo() = Split(quesNum, ",")
-
-                ' Check if qNo array has more than one question number
-                If qNo.Length() > 1 Then
-                    ' Print each question number in the textbox for user to choose from
-                    For index As Integer = 0 To qNo.Length() - 1
-                        answerTextBox.Text = String.Concat(answerTextBox.Text, questionMatching.question(Sample_Repo_TBLTableAdapter1, CInt(qNo(index))), vbNewLine)
-                    Next
-                    MsgBox("Select question from one of the list.")
-                Else
-                    answerTextBox.Text = questionMatching.retrieveAnswer(Sample_Repo_TBLTableAdapter1, CInt(qNo(0)))
-                End If
+                ' Display the result on the screen
+                nGramMatching(quesNum)
             Else ' If -1 returned
                 MsgBox("Question not found by n-gram tokenizing method")
             End If
+
+            '----------------------------------------------------------------------------------
+            ' METHOD 3: POS-Tagging Method
+            MsgBox("Lets find the match by POS tagging method")
+            Dim taggedDict = POSTagger.main_POS(ques)
+
+            ' Concat the contents of Dictionary to create set of keywords
+            Dim taggedSent As String = POSTagger.regexKeyword(taggedDict)
+
+            ' Display the question on the screen
+            POSTagMatching(taggedSent)
 
         Else
             MsgBox("Question Found: " & quesNo)
@@ -87,11 +86,8 @@ Public Class Form1
             Dim taggedSentDict = POSTagger.main_POS(regexQuestion)
 
             ' Concat the contents of Dictionary to create set of keywords
-            Dim taggedSent As String = ""
+            Dim taggedSent As String = POSTagger.regexKeyword(taggedSentDict)
 
-            For Each item As KeyValuePair(Of String, String) In taggedSentDict
-                taggedSent = String.Concat(taggedSent, item.Key, "\", item.Value, " ")
-            Next
 
             ' Add text to the file. 
             File.Write(index)
@@ -107,7 +103,88 @@ Public Class Form1
         MsgBox("File Created")
     End Sub
 
-    
+    ' Function to retrieve the answer from the database
+    Private Sub nGramMatching(ByVal quesNumString As String)
+        ' Split the string object in tokens
+        Dim qNo() = Split(quesNumString, ",")
+
+        ' Check if qNo array has more than one question number
+        If qNo.Length() > 1 Then
+            ' Print each question number in the textbox for user to choose from
+            For index As Integer = 0 To qNo.Length() - 1
+                answerTextBox.Text = String.Concat(answerTextBox.Text, questionMatching.question(Sample_Repo_TBLTableAdapter1, CInt(qNo(index))), vbNewLine)
+            Next
+            MsgBox("Select question from one of the list.")
+        Else
+            answerTextBox.Text = questionMatching.retrieveAnswer(Sample_Repo_TBLTableAdapter1, CInt(qNo(0)))
+        End If
+    End Sub
+
+    ' Function to display question found by POS tag method
+    Private Sub POSTagMatching(ByVal taggedInput As String)
+        MsgBox("Tagged Sentence: " & taggedInput)
+        Dim keywordMatchCount As Integer                                        ' Variable to count the number of keywords match
+        Dim keywordMatchDict As New Dictionary(Of Integer, List(Of Integer))    ' Dictionary to store the question number and their match count
+
+        ' Split the tagged input based on commas
+        Dim tagInputArr() As String = Split(taggedInput, ",")
+
+        ' Open the input file 
+        Dim path As String = "C:\Users\Admin\Documents\Visual Studio 2012\Projects\InformationRetrieval_Algo\InformationRetrieval_Algo\QuestionLog.txt"
+
+        ' Open file to Read
+        Dim file = My.Computer.FileSystem.OpenTextFileReader(path)
+
+        Do Until file.EndOfStream
+            ' Initialize the keyowrd count to zero
+            keywordMatchCount = 0
+
+            ' Read line from the file
+            Dim dataString As String = file.ReadLine()
+
+            ' Split the questionString into tokens based on space
+            Dim dataArr() As String = Split(dataString, Space(5))
+
+            MsgBox("Tagged Data: " & dataArr(2))
+            ' Split the keyword data string based on commas
+            Dim keywordArr() As String = Split(dataArr(2), ",")
+
+            ' Compare each keyword in input string with each keyword in data string
+            For item As Integer = 0 To tagInputArr.Length - 2
+                For index As Integer = 0 To keywordArr.Length - 2
+                    If String.Compare(tagInputArr(item), keywordArr(index), True) = 0 Then
+                        ' Increment the match count by 1
+                        keywordMatchCount = keywordMatchCount + 1
+                    End If
+                Next
+            Next
+
+            ' Create a new list to store question number
+            Dim questionNoList As New List(Of Integer)
+
+            ' Add the question number associated with the question to the list
+            questionNoList.Add(CInt(dataArr(0)))
+
+            ' Check if key already present in the Dictionary
+            If keywordMatchDict.ContainsKey(keywordMatchCount) Then
+                ' Append the question number associated with it to the dictionary
+                keywordMatchDict.Item(keywordMatchCount).Add(CInt(dataArr(0)))
+            Else
+                ' Create a new key and add the questio number list to the dictionary
+                keywordMatchDict.Add(keywordMatchCount, questionNoList)
+            End If
+        Loop
+        ' Close the file
+        file.Close()
+
+        ' Find the question number with maximum count
+        Dim quesNumPOS = n_gramMatching.findQuestionNo(keywordMatchDict)
+
+        MsgBox(quesNumPOS)
+
+    End Sub
+
+    ' Button to bnavigate to POS tagger form
     Private Sub POStaggerButton_Click(sender As Object, e As EventArgs) Handles POStaggerButton.Click
         POS_Tagger.Visible = True
 

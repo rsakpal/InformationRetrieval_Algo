@@ -58,7 +58,7 @@ Module questionMatching
             Dim dataQues As String = file.ReadLine()
             Dim TestArray() As String = Split(dataQues, Space(5))
 
-            MsgBox("Question: " & TestArray(1).ToLower() & "Input: " & regexInput.ToLower())
+            'MsgBox("Question: " & TestArray(1).ToLower() & "Input: " & regexInput.ToLower())
             ' Check to see if a match to the question is found
             If String.Compare(Trim(TestArray(1)), Trim(regexInput), True) = 0 Then
                 ' Set flag to false to indiciae that match is found
