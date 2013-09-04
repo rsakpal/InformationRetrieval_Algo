@@ -35,18 +35,8 @@ Public Class Form1
             MsgBox("Question not found by direct matching.")
 
             ' METHOD 2: N-Gram matching
-            Dim quesNum = n_gramMatching.main_nGrams(ques)
-            MsgBox("Solutin: " & quesNum)
+            Dim quesNumNgram = n_gramMatching.main_nGrams(ques)
 
-            ' If question match is found
-            If Not quesNum = -1 Then
-                ' Display the result on the screen
-                nGramMatching(quesNum)
-            Else ' If -1 returned
-                MsgBox("Question not found by n-gram tokenizing method")
-            End If
-
-            '----------------------------------------------------------------------------------
             ' METHOD 3: POS-Tagging Method
             MsgBox("Lets find the match by POS tagging method")
             Dim taggedDict = POSTagger.main_POS(ques)
@@ -55,9 +45,25 @@ Public Class Form1
             Dim taggedSent As String = POSTagger.regexKeyword(taggedDict)
 
             ' Display the question on the screen
-            POSTagMatching(taggedSent)
+            Dim quesNumPOS = POSTagMatching(taggedSent)
 
-        Else
+            '--------------------------------------------------
+
+            ' If Method 2 soln found and Method 3 soln not found
+            If Not quesNumNgram = -1 And quesNumPOS = -1 Then
+                ' Display the result on the screen
+                retrieveAns(quesNumNgram)
+            ElseIf quesNumNgram = -1 And Not quesNumPOS = -1 Then               ' If Method 2 soln not found and Method 3 soln found
+                ' Display the result on the screen
+                retrieveAns(quesNumPOS)
+            ElseIf Not quesNumNgram = -1 And Not quesNumPOS = -1 Then           ' IF soln found for both method
+                compareAns(quesNumNgram, quesNumPOS)
+            Else ' If -1 returned
+                MsgBox("Question not found by n-gram tokenizing method and POS-tagging Method")
+            End If
+
+
+        Else ' Display the answer found by the direct matching method
             MsgBox("Question Found: " & quesNo)
             answerTextBox.Text = questionMatching.retrieveAnswer(Sample_Repo_TBLTableAdapter1, quesNo)
         End If
@@ -88,7 +94,6 @@ Public Class Form1
             ' Concat the contents of Dictionary to create set of keywords
             Dim taggedSent As String = POSTagger.regexKeyword(taggedSentDict)
 
-
             ' Add text to the file. 
             File.Write(index)
             File.Write(Space(5))
@@ -104,7 +109,7 @@ Public Class Form1
     End Sub
 
     ' Function to retrieve the answer from the database
-    Private Sub nGramMatching(ByVal quesNumString As String)
+    Private Sub retrieveAns(ByVal quesNumString As String)
         ' Split the string object in tokens
         Dim qNo() = Split(quesNumString, ",")
 
@@ -120,9 +125,41 @@ Public Class Form1
         End If
     End Sub
 
+    ' Function to compare answer of two methods and display the best possible answer
+    Private Sub compareAns(ByVal quesNgramStr As String, ByVal quesPOSStr As String)
+        ' Split the string object in tokens
+        Dim qNgramArr() = Split(quesNgramStr, ",")
+        Dim qPOSArr() = Split(quesPOSStr, ",")
+
+        ' Check if qNo array has more than one question number
+        If qNgramArr.Length() > qPOSArr.Length() And qPOSArr.Length() > 1 Then
+            ' Print each question number in the textbox for user to choose from
+            For index As Integer = 0 To qPOSArr.Length() - 1
+                answerTextBox.Text = String.Concat(answerTextBox.Text, questionMatching.question(Sample_Repo_TBLTableAdapter1, CInt(qPOSArr(index))), vbNewLine)
+            Next
+            MsgBox("Select question from one of the list.")
+        ElseIf qNgramArr.Length() < qPOSArr.Length() And qNgramArr.Length() > 1 Then
+            ' Print each question number in the textbox for user to choose from
+            For index As Integer = 0 To qNgramArr.Length() - 1
+                answerTextBox.Text = String.Concat(answerTextBox.Text, questionMatching.question(Sample_Repo_TBLTableAdapter1, CInt(qNgramArr(index))), vbNewLine)
+            Next
+            MsgBox("Select question from one of the list.")
+        ElseIf qNgramArr.Length() = qPOSArr.Length() And qNgramArr.Length() > 1 Then
+            ' Print each question number in the textbox for user to choose from
+            For index As Integer = 0 To qNgramArr.Length() - 1
+                answerTextBox.Text = String.Concat(answerTextBox.Text, questionMatching.question(Sample_Repo_TBLTableAdapter1, CInt(qNgramArr(index))), vbNewLine)
+            Next
+            MsgBox("Select question from one of the list.")
+        ElseIf qPOSArr.Length() = 1 Then
+            answerTextBox.Text = questionMatching.retrieveAnswer(Sample_Repo_TBLTableAdapter1, CInt(qPOSArr(0)))
+        Else
+            answerTextBox.Text = questionMatching.retrieveAnswer(Sample_Repo_TBLTableAdapter1, CInt(qNgramArr(0)))
+        End If
+    End Sub
+
     ' Function to display question found by POS tag method
-    Private Sub POSTagMatching(ByVal taggedInput As String)
-        MsgBox("Tagged Sentence: " & taggedInput)
+    Function POSTagMatching(ByVal taggedInput As String)
+        'MsgBox("Tagged Sentence: " & taggedInput)
         Dim keywordMatchCount As Integer                                        ' Variable to count the number of keywords match
         Dim keywordMatchDict As New Dictionary(Of Integer, List(Of Integer))    ' Dictionary to store the question number and their match count
 
@@ -145,7 +182,7 @@ Public Class Form1
             ' Split the questionString into tokens based on space
             Dim dataArr() As String = Split(dataString, Space(5))
 
-            MsgBox("Tagged Data: " & dataArr(2))
+            'MsgBox("Tagged Data: " & dataArr(2))
             ' Split the keyword data string based on commas
             Dim keywordArr() As String = Split(dataArr(2), ",")
 
@@ -180,9 +217,9 @@ Public Class Form1
         ' Find the question number with maximum count
         Dim quesNumPOS = n_gramMatching.findQuestionNo(keywordMatchDict)
 
-        MsgBox(quesNumPOS)
+        Return quesNumPOS
 
-    End Sub
+    End Function
 
     ' Button to bnavigate to POS tagger form
     Private Sub POStaggerButton_Click(sender As Object, e As EventArgs) Handles POStaggerButton.Click
